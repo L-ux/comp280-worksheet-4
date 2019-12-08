@@ -10,6 +10,10 @@ public class MainMenu : MonoBehaviour
     public Image[] Mags;    // all magazine sprites
     public Text AmmoText;   // the ammo numbers
 
+    public Canvas staticCanvas; // for pausing n such
+    public Canvas dynamicCanvas;
+
+
     public Transform Enemy; // enemy for the radar, below stuff for enemy details
     Vector3 toEnemy3;
     float radAngle;
@@ -20,6 +24,8 @@ public class MainMenu : MonoBehaviour
     int iMags = 6; // number of extra mags the player has
     int iMagCap = 30; // number of rounds in a mag
     int iAmmo = 30; // number of round in your CURRENT mag
+
+    public bool isActive = true;
 
     // fancy stuff for directions
     enum e_Dirs
@@ -52,52 +58,56 @@ public class MainMenu : MonoBehaviour
         AmmoChange(iAmmo);
         MagChange(iMags);
         DirChange();
+        StartCoroutine(waitBecomeInactive());
     }
 
     // Update is called once per frame
     void Update()
     {
-        #region HP
-        if(Input.GetKeyDown(KeyCode.DownArrow)) // lose HP
+        if (isActive)
         {
-            if (iHP != 0)
-                iHP--;
-        }
-        else if(Input.GetKeyDown(KeyCode.UpArrow)) // gain HP
-        {
-            if (iHP !=15)
-                iHP++;
-        }
-        #endregion
-        
-        #region Ammo
-        else if(Input.GetKeyDown(KeyCode.Mouse0)) // fire
-        {
-            if (iAmmo > 0)
+            #region HP
+            if(Input.GetKeyDown(KeyCode.DownArrow)) // lose HP
             {
-                Debug.Log("pew pew");
-                iAmmo--;
+                if (iHP != 0)
+                    iHP--;
             }
-        }
-        else if(Input.GetKeyDown(KeyCode.R)) // reload
-        {
-            if (iMags > 0 && iAmmo < 30)
+            else if(Input.GetKeyDown(KeyCode.UpArrow)) // gain HP
             {
-                iAmmo = iMagCap;
-                iMags--;
+                if (iHP !=15)
+                    iHP++;
             }
-        }
-        #endregion
+            #endregion
+            
+            #region Ammo
+            else if(Input.GetKeyDown(KeyCode.Mouse0)) // fire
+            {
+                if (iAmmo > 0)
+                {
+                    Debug.Log("pew pew");
+                    iAmmo--;
+                }
+            }
+            else if(Input.GetKeyDown(KeyCode.R)) // reload
+            {
+                if (iMags > 0 && iAmmo < 30)
+                {
+                    iAmmo = iMagCap;
+                    iMags--;
+                }
+            }
+            #endregion
         
-        #region Enemy
-        toEnemy3 = Enemy.transform.position - transform.position;
-        radAngle = Mathf.Acos(Vector3.Dot(transform.forward, toEnemy3) / (transform.forward.magnitude * toEnemy3.magnitude));
-        crossyboi = Vector3.Cross(transform.forward, toEnemy3); // enemy to right is +ve
+            #region Enemy
+            toEnemy3 = Enemy.transform.position - transform.position;
+            radAngle = Mathf.Acos(Vector3.Dot(transform.forward, toEnemy3) / (transform.forward.magnitude * toEnemy3.magnitude));
+            crossyboi = Vector3.Cross(transform.forward, toEnemy3); // enemy to right is +ve
 
-        e_Dirs wat = doTheBigAngleCheck(radAngle);
-        if (wat != currentDir)
-            currentDir = wat;
-        #endregion         
+            e_Dirs wat = doTheBigAngleCheck(radAngle);
+            if (wat != currentDir)
+                currentDir = wat;
+            #endregion   
+        }      
     }
 
 
@@ -181,6 +191,24 @@ public class MainMenu : MonoBehaviour
         DirChange();
     }
 
+
+    IEnumerator waitBecomeInactive()
+    {
+        yield return new WaitUntil(() => MenuController.currentMenu != MenuController.Menus.Game);
+        staticCanvas.gameObject.SetActive(false);
+        dynamicCanvas.gameObject.SetActive(false);
+        isActive = false;
+        StartCoroutine(waitBecomeActive());
+    }
+
+    IEnumerator waitBecomeActive()
+    {
+        yield return new WaitUntil(() => MenuController.currentMenu == MenuController.Menus.Game);
+        staticCanvas.gameObject.SetActive(true);
+        dynamicCanvas.gameObject.SetActive(true);
+        isActive = true;
+        StartCoroutine(waitBecomeInactive());
+    }
 
     void HPChange(int oldhp)
     {   
