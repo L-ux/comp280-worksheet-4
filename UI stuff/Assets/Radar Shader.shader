@@ -3,18 +3,18 @@
     Properties
     {
         _Color ("Floor Color", Color) = (1,1,1,1)
-        _LitColor ("Lit Radar Color", Color) = (1,1,1,1)
-        _DullColor ("Dull Radar Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
+
+        _LitColor ("Lit Radar Color", Color) = (1,1,1,1)
+        _DullColor ("Dull Radar Color", Color) = (1,1,1,1)
         _RadarDistance ("Radar Distance", Range(0,7)) = 1.0
         _RadarWidth ("Radar Width", Range(0,1)) = 0.3
         _RadarLocation ("Radar Location", Vector) = (0,0,0,0)
-        _EnemyDirection ("Enemy Direction", Vector) = (1,0,0,0)
-        _RadarChunkWidth ("Radar Segment Width", Range(0,1)) = 0.2
-        _EnemyAngle ("Enemy Angle", float) = 0
-        _EnemyIsRight ("Enemy Rotation Direction", float ) = 1
+        _RadarChunkWidth ("Radar Segment Width", Range(0,1)) = 0.7
+        _EnemyAngle("Enemy Angle", float) = 0.0
+        _EnemyRight("Enemy to the right", int) = 1
     }
     SubShader
     {
@@ -38,16 +38,16 @@
 
         half _Glossiness;
         half _Metallic;
-        fixed4 _Color;
-        fixed4 _LitColor;
-        fixed4 _DullColor;
-        float _RadarDistance;
-        float _RadarWidth;
-        fixed4 _RadarLocation;
-        fixed4 _EnemyDirection;
-        float _RadarChunkWidth;
-        float _EnemyAngle;
-        float _EnemyIsRight;
+        fixed4 _Color;          // floor color
+
+        fixed4 _LitColor;       // lit radar color
+        fixed4 _DullColor;      // dull radar color
+        float _RadarDistance;   // distance to radar ring from radar location
+        float _RadarWidth;      // thickness of the radar bar
+        fixed4 _RadarLocation;  // origin of the radar thing
+        float _RadarChunkWidth; // How wide to draw the radar chunk
+        float _EnemyAngle;      // angle between camera and 
+        float _EnemyRight;
 
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
@@ -68,21 +68,23 @@
 
         float doDotProduct(fixed4 vec1, fixed4 vec2)
         {
-            return (vec1.x * vec2.x + vec1.z * vec2.z);
+            float wat = (vec1.x * vec2.x + vec1.z * vec2.z);
+            return wat;
         }
 
         bool doCrossRight(fixed4 vec1, fixed4 vec2) // return 1 if true, 0 is false
         {
             fixed4 cross = ((vec1.y * vec2.z - vec2.y * vec1.z),
-                            (vec1.z * vec2.x - vec2.z - vec1.x),
-                            (vec1.x * vec2.y - vec2.x - vec1.y),
+                            (vec1.z * vec2.x - vec2.z * vec1.x),
+                            (vec1.x * vec2.y - vec2.x * vec1.y),
                             0);
             return cross.y > 1;
         }
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
-            float dist = length(IN.worldPos.xyz - _RadarLocation.xyz) - _RadarDistance;
+            fixed3 dir = IN.worldPos.xyz - _RadarLocation.xyz;
+            float dist = length(dir) - _RadarDistance;
             float upper = dist + (_RadarWidth/2);
             float lower = dist - (_RadarWidth/2);
 
@@ -94,16 +96,16 @@
 
             // to find whether the direction to the enemy is correct
 
-            fixed4 wat = (IN.worldPos.x,0,IN.worldPos.y,0);
-            float indotdot = doDotProduct(wat, _EnemyDirection);
 
-            bool isWithinDot = (indotdot < _EnemyAngle + 0.5 && indotdot > _EnemyAngle - 0.5);
-            bool isSameDirection = doCrossRight(wat, _EnemyDirection);
+            float localDot = doDotProduct((dir.x, dir.z), (1,0));
+            //localDot = 0;
+            float radarUpper =  _EnemyAngle + _RadarChunkWidth;
+            float radarLower =  _EnemyAngle - _RadarChunkWidth;
+            bool isWithinAngle = (localDot < radarUpper && localDot > radarLower);
 
-            bool totalRadarDir = /*isWithinDot **/ isSameDirection;
 
 
-            c.rgb = colorBlend(_Color,  colorBlend(_DullColor, _LitColor, totalRadarDir), isWithinRadar);
+            c.rgb = colorBlend(_Color, colorBlend(_DullColor, _LitColor, isWithinAngle), isWithinRadar);
 
             o.Albedo = c.rgb;
             // Metallic and smoothness come from slider variables

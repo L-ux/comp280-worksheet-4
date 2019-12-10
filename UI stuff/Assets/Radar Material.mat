@@ -60,8 +60,9 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EnemyAngle: 7.7472486
+    - _EnemyAngle: 0.9999547
     - _EnemyIsRight: 0
+    - _EnemyRight: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -78,10 +79,10 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _CameraDirection: {r: 0.34016028, g: 0, b: 0.93944484, a: 0}
+    - _CameraDirection: {r: 0.8328442, g: 0, b: -0.089572854, a: 0}
     - _Color: {r: 0.16629584, g: 0.282982, b: 0.3490566, a: 1}
     - _DullColor: {r: 0.4056604, g: 0.4056604, b: 0.4056604, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EnemyDirection: {r: -1.0204809, g: 0, b: 8.621665, a: 0}
+    - _EnemyDirection: {r: 9.331468, g: 0, b: 0.26871854, a: 0}
     - _LitColor: {r: 0.5471698, g: 0, b: 0, a: 1}
-    - _RadarLocation: {r: 1.0204809, g: 0, b: 2.8183346, a: 0}
+    - _RadarLocation: {r: 2.8998718, g: 0, b: 0.08492807, a: 0}
