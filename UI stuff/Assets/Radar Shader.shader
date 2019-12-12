@@ -13,8 +13,7 @@
         _RadarWidth ("Radar Width", Range(0,1)) = 0.3
         _RadarLocation ("Radar Location", Vector) = (0,0,0,0)
         _RadarChunkWidth ("Radar Segment Width", Range(0,1)) = 0.7
-        _EnemyAngle("Enemy Angle", float) = 0.0
-        _EnemyRight("Enemy to the right", int) = 1
+        _EnemyDirection ("Direction To Enemy", Vector) = (0,0,0,0)
     }
     SubShader
     {
@@ -46,8 +45,7 @@
         float _RadarWidth;      // thickness of the radar bar
         fixed4 _RadarLocation;  // origin of the radar thing
         float _RadarChunkWidth; // How wide to draw the radar chunk
-        float _EnemyAngle;      // angle between camera and 
-        float _EnemyRight;
+        fixed4 _EnemyDirection;
 
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
@@ -85,27 +83,26 @@
         {
             fixed3 dir = IN.worldPos.xyz - _RadarLocation.xyz;
             float dist = length(dir) - _RadarDistance;
-            float upper = dist + (_RadarWidth/2);
-            float lower = dist - (_RadarWidth/2);
+            float radarUpper = dist + (_RadarWidth/2);
+            float radarLower = dist - (_RadarWidth/2);
+            // to draw the radar Circle
+            bool isWithinRadar = (radarLower < 0 && radarUpper > 0);
+
+            fixed3 enemyDir = _RadarLocation.xyz - (-_EnemyDirection * _RadarDistance).xyz;
+            fixed3 enemyDir2 =  enemyDir - IN.worldPos.xyz;
+            float enemyDist = length(enemyDir2);
+            float enemyUpper = enemyDist + (_RadarChunkWidth/2);
+            float enemyLower = enemyDist - (_RadarChunkWidth/2);
+
+            bool isWithinChunk = (enemyLower < 0 && enemyUpper > 0);
+            
+
+
+
 
             // Albedo comes from a texture tinted by color
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-
-            // to find whether it is within the radar or not
-            bool isWithinRadar = (lower < 0 && upper > 0);
-
-            // to find whether the direction to the enemy is correct
-
-
-            float localDot = doDotProduct((dir.x, dir.z), (1,0));
-            //localDot = 0;
-            float radarUpper =  _EnemyAngle + _RadarChunkWidth;
-            float radarLower =  _EnemyAngle - _RadarChunkWidth;
-            bool isWithinAngle = (localDot < radarUpper && localDot > radarLower);
-
-
-
-            c.rgb = colorBlend(_Color, colorBlend(_DullColor, _LitColor, isWithinAngle), isWithinRadar);
+            c.rgb = colorBlend(_Color, colorBlend(_DullColor, _LitColor, isWithinChunk), isWithinRadar);
 
             o.Albedo = c.rgb;
             // Metallic and smoothness come from slider variables

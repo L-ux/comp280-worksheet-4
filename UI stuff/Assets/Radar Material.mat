@@ -70,9 +70,9 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _RadarChunkWidth: 0.2
-    - _RadarDistance: 1
-    - _RadarWidth: 0.2
+    - _RadarChunkWidth: 0.8
+    - _RadarDistance: 1.2
+    - _RadarWidth: 0.3
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -83,6 +83,6 @@ Material:
     - _Color: {r: 0.16629584, g: 0.282982, b: 0.3490566, a: 1}
     - _DullColor: {r: 0.4056604, g: 0.4056604, b: 0.4056604, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EnemyDirection: {r: 9.331468, g: 0, b: 0.26871854, a: 0}
+    - _EnemyDirection: {r: 0.9876612, g: 0, b: 0.15660557, a: 0}
     - _LitColor: {r: 0.5471698, g: 0, b: 0, a: 1}
-    - _RadarLocation: {r: 2.8998718, g: 0, b: 0.08492807, a: 0}
+    - _RadarLocation: {r: -1.1363006, g: 0, b: -2.055963, a: 0}
