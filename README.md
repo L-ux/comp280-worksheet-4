@@ -1,11 +1,11 @@
 # comp280-worksheet-4
 
 ### Controls_
-Tab         : Open Pause Menu / Go Back a menu ( use this after clicking on the menu or settings buttons from the pause menu )
-Left Click  : Fire Weapon 
-R           : Reload 
-Up Arrow    : Increase HP
-Down Arrow  : Decrease HP
+- Tab         : Open Pause Menu / Go Back a menu ( use this after clicking on the menu or settings buttons from the pause menu )
+- Left Click  : Fire Weapon 
+- R           : Reload 
+- Up Arrow    : Increase HP
+- Down Arrow  : Decrease HP
 
 
 ##### Extra notes
